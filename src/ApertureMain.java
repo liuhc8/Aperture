@@ -168,7 +168,7 @@ public class ApertureMain {
 	
 	private void showApertureHelp() {
 		System.out.println("Aperture Help");
-		System.out.println("Description: Fast and sensitive detection of structural variations and viral integrations in ctDNA dataset");
+		System.out.println("Description: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm");
 		System.out.println("Contact: Hongchao Liu <i8q8r9@live.com>");
 		System.out.println("");
 		System.out.println("Usage: java -jar aperture.jar <command> <arguments>");
@@ -255,11 +255,11 @@ public class ApertureMain {
             options.addOption(opt);
         }
         
-        opt = new Option("1", "r1", true, "R1.fq.gz");
+        opt = new Option("1", "r1", true, "Path of R1.fq.gz");
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("2", "r2", true, "R2.fq.gz");
+        opt = new Option("2", "r2", true, "Path of R2.fq.gz");
         opt.setRequired(true);
         options.addOption(opt);
         
@@ -275,11 +275,11 @@ public class ApertureMain {
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("1BS", "r1BarStart", true, "Barcode start index in R1");
+        opt = new Option("1BS", "r1BarStart", true, "Barcode start index in R1 (0-based)");
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("2BS", "r2BarStart", true, "Barcode start index in R2");
+        opt = new Option("2BS", "r2BarStart", true, "Barcode start index in R2 (0-based)");
         opt.setRequired(true);
         options.addOption(opt);
         
@@ -291,11 +291,11 @@ public class ApertureMain {
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("1S", "r1InsStart", true, "ctDNA fragment start index in R1");
+        opt = new Option("1S", "r1InsStart", true, "ctDNA fragment start index in R1 (0-based)");
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("2S", "r2InsStart", true, "ctDNA fragment start index in R2");
+        opt = new Option("2S", "r2InsStart", true, "ctDNA fragment start index in R2 (0-based)");
         opt.setRequired(true);
         options.addOption(opt);
         
