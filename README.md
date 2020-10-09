@@ -49,8 +49,7 @@ java -Xmx40g -jar fusion_test/aperture12.jar index -R ~/fusion_test/ref/hg38HBV.
 ## Detecting SVs and viral integrations
 
 Aperture needs a pair of FastQ files and an Aperture index as input. The output is in compressed VCF format (.vcf.gz). Aperture supports barcode based filter to ensure specificity. So if your dataset is produced by abundant sequencing and contains barcode as unique molecular identifier, parameters including `-1BS`, `-2BS`, `-1BL`, `-2BL`, `-1S` and `-2S` should be used to specify the location of barcodes in a read.  
-ATCGGTTTGCCAAAGTATTGCTTATAA  
-                  TGCTTCTAAGTCCGTAAGTAGTGTCCG
+![Image text](./Barcode_parameters.jpg)
 ### Command-line arguments
 ```
 Usage: java -jar aperture.jar call  -1 <arg> -1BL <arg> -1BS <arg> -1S <arg> -2 <arg> -2BL <arg> -2BS <arg> -2S <arg> -D <arg> [-H] -I <arg> -P <arg> -T <arg>
