@@ -1,10 +1,8 @@
 # Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm
 
-Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.
-
-If you have any trouble running Aperture, please raise an issue using the Issues tab above.
-
-[Click here to download Aperture](https://github.com/i8q8r9)
+Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
+If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
+[Click here to download Aperture](https://github.com/i8q8r9/Aperture/releases)
 
 # Citation
 For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
@@ -20,11 +18,11 @@ To run Aperture, java 1.8 or later version must be installed in your system.
 * **Memory** Typically, Aperture needs 40GB in index building and 30GB in SV calling for human genome (hg19 or hg38). The exact requirement depends on many factors including reference genome, sequencing depth, cfDNA insert size and sample quality.
 
 # Running
+Aperture takes a Aperture index and a set of ctDNA read files and outputs SV results in VCF format.  
 Pre-compiled binaries are available at https://github.com/i8q8r9/Aperture/releases. 
-Aperture takes a Aperture index and a set of ctDNA read files and outputs SV results in VCF format.
 
 ## Building an Aperture index
-Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built. 
+Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built.   
 Pre-built Aperture indexs for hg19 and hg38 are available at
 ### Command-line arguments
 ```
@@ -51,7 +49,7 @@ Aperture needs a pair of FastQ files and an Aperture index as input. The output 
 Usage: java -jar aperture.jar call  -1 <arg> -1BL <arg> -1BS <arg> -1S <arg> -2 <arg> -2BL <arg> -2BS <arg> -2S <arg> -D <arg> [-H] -I <arg> -P <arg> -T <arg>
 ```
 
-argument|description
+Argument|Description
 ---|---
 -1,--r1 <arg>|Path of R1.fq.gz
 -1BL,--r1BarLen <arg>|Length of barcode in R1
@@ -61,7 +59,7 @@ argument|description
 -2BL,--r2BarLen <arg>|Length of barcode in R2
 -2BS,--r2BarStart <arg>|Barcode start index in R2 (0-based)
 -2S,--r2InsStart <arg>|ctDNA fragment start index in R2 (0-based)
--D,--dir <arg>| Output path
+-D,--dir <arg>|Output path
 -H,--help|Show help message
 -I,--index <arg>|Path of Aperture index
 -P,--project <arg>|Project name
@@ -72,7 +70,7 @@ java -Xms50g -Xmx50g -jar ~/fusion_test/aperture12.jar call -1 SRR8551545_1.fast
 ```
 
 # Output interpretation
-In Aperture, all SVs are described as breakends and thus all the records in Aperture VCF are identified with the tag “SYTYPE=BND” in the INFO field.
+In Aperture, all SVs are described as breakends and thus all the records in Aperture VCF are identified with the tag “SYTYPE=BND” in the INFO field.  
 Aperture VCF output follows the VCF 4.2 spec. All custom fields are described in the VCF header. 
 
 ## VCF FILTER Fields
