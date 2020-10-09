@@ -1,3 +1,4 @@
+[![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 # Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm
 
 Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
@@ -43,7 +44,8 @@ argument|description
 ### Example
 ```
 java -Xmx40g -jar fusion_test/aperture12.jar index -R ~/fusion_test/ref/hg38HBV.fa -V ~/fusion_test/ref/dbsnp_common_hg38.vcf -O ~/fusion_test/ref/hg38_ap12_test -T 30
-```
+```  
+
 ## Detecting SVs and viral integrations
 
 Aperture needs a pair of FastQ files and an Aperture index as input. The output is in compressed VCF format (.vcf.gz). Aperture supports barcode based filter to ensure specificity. So if your dataset is produced by abundant sequencing and contains barcode as unique molecular identifier, parameters including `-1BS`, `-2BS`, `-1BL`, `-2BL`, `-1S` and `-2S` should be used to specify the location of barcodes in a read.
@@ -71,7 +73,7 @@ Argument|Description
 ```
 java -Xms50g -Xmx50g -jar ~/fusion_test/aperture12.jar call -1 SRR8551545_1.fastq.gz -2 SRR8551545x_2.fastq.gz -I ~/fusion_test/ref/hg38_ap12 -D SRR8551545 -P SRR8551545_ap12 -1BS 0 -2BS 0 -1BL 6 -2BL 0 -1S 0 -2S 0 -T 30
 ```
-
+  
 # Output interpretation
 In Aperture, all SVs are described as breakends and thus all the records in Aperture VCF are identified with the tag “SYTYPE=BND” in the INFO field.  
   
