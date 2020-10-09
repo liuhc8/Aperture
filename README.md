@@ -1,7 +1,9 @@
 # Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm
 
 Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
+  
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
+  
 [Click here to download Aperture](https://github.com/i8q8r9/Aperture/releases)
 
 # Citation
@@ -23,6 +25,7 @@ Pre-compiled binaries are available at https://github.com/i8q8r9/Aperture/releas
 
 ## Building an Aperture index
 Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built.   
+  
 Pre-built Aperture indexs for hg19 and hg38 are available at
 ### Command-line arguments
 ```
@@ -71,6 +74,7 @@ java -Xms50g -Xmx50g -jar ~/fusion_test/aperture12.jar call -1 SRR8551545_1.fast
 
 # Output interpretation
 In Aperture, all SVs are described as breakends and thus all the records in Aperture VCF are identified with the tag “SYTYPE=BND” in the INFO field.  
+  
 Aperture VCF output follows the VCF 4.2 spec. All custom fields are described in the VCF header. 
 
 ## VCF FILTER Fields
