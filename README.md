@@ -4,8 +4,6 @@
 Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
   
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
-  
-[Click here to download Aperture](https://github.com/i8q8r9/Aperture/releases)
 
 # Citation
 For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
@@ -22,12 +20,15 @@ To run Aperture, java 1.8 or later version must be installed in your system.
 
 # Running
 Aperture takes a Aperture index and a set of ctDNA read files and outputs SV results in VCF format.  
-Pre-compiled binaries are available at https://github.com/i8q8r9/Aperture/releases. 
+Pre-compiled binaries are available at <https://github.com/i8q8r9/Aperture/releases>. 
 
 ## Building an Aperture index
 Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built.   
   
-Pre-built Aperture indexs for hg19 and hg38 are available at
+Human reference genome and the corresponding common SNP database can be downloaded here. [hg19](https://ndownloader.figshare.com/files/24731045) [hg38](https://ndownloader.figshare.com/files/24731048)  
+  
+Pre-built Aperture indexs for hg19 and hg38 are available here. [hg19](https://ndownloader.figshare.com/files/24741890) [hg38](https://ndownloader.figshare.com/files/24744524)  
+  
 ### Command-line arguments
 ```
 Usage: java -jar aperture.jar index -R <genome.fa> -V <snp.vcf> -O <out> -T <threads>
@@ -43,13 +44,14 @@ argument|description
 
 ### Example
 ```
-java -Xmx40g -jar fusion_test/aperture12.jar index -R ~/fusion_test/ref/hg38HBV.fa -V ~/fusion_test/ref/dbsnp_common_hg38.vcf -O ~/fusion_test/ref/hg38_ap12_test -T 30
+java -Xmx40g -jar fusion_test/aperture12.jar index -R hg19.fa -V dbsnp_common_hg19.vcf -O aperture_hg19 -T 30
 ```  
 
 ## Detecting SVs and viral integrations
 
 Aperture needs a pair of FastQ files and an Aperture index as input. The output is in compressed VCF format (.vcf.gz). Aperture supports barcode based filter to ensure specificity. So if your dataset is produced by abundant sequencing and contains barcode as unique molecular identifier, parameters including `-1BS`, `-2BS`, `-1BL`, `-2BL`, `-1S` and `-2S` should be used to specify the location of barcodes in a read.  
-![Image text](./Barcode_parameters.jpg)
+The following diagram gives a brief introduction to barcode-related parameters:  
+![Image text](https://ndownloader.figshare.com/files/25020722)
 ### Command-line arguments
 ```
 Usage: java -jar aperture.jar call  -1 <arg> -1BL <arg> -1BS <arg> -1S <arg> -2 <arg> -2BL <arg> -2BS <arg> -2S <arg> -D <arg> [-H] -I <arg> -P <arg> -T <arg>
@@ -72,7 +74,9 @@ Argument|Description
 -T,--threads <arg>|Number of threads
 ### Example
 ```
-java -Xms50g -Xmx50g -jar ~/fusion_test/aperture12.jar call -1 SRR8551545_1.fastq.gz -2 SRR8551545x_2.fastq.gz -I ~/fusion_test/ref/hg38_ap12 -D SRR8551545 -P SRR8551545_ap12 -1BS 0 -2BS 0 -1BL 6 -2BL 0 -1S 0 -2S 0 -T 30
+curl -L curl -L https://ndownloader.figshare.com/files/25020827 --output test_R1.fq.gz
+curl -L curl -L https://ndownloader.figshare.com/files/25020830 --output test_R2.fq.gz
+java -Xmx30g -jar aperture.jar call -1 test_R1.fq.gz -2 test_R2.fq.gz -I aperture_hg19 -D ./ -P test -1BS 0 -2BS 0 -1BL 6 -2BL 0 -1S 0 -2S 0 -T 10
 ```
   
 # Output interpretation
