@@ -5,11 +5,6 @@ Aperture is a new alignment-free SV caller designed for ctDNA sequencing with ba
   
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
 
-# Citation
-For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
-
-**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
-Hongchao Liu, Guangyu Li, Xiaoyue Wang.
 
 # Software and Hardware Requirements
 ## Software Requirements
@@ -50,6 +45,7 @@ java -Xmx40g -jar fusion_test/aperture12.jar index -R hg19.fa -V dbsnp_common_hg
 ## Detecting SVs and viral integrations
 
 Aperture needs a pair of FastQ files and an Aperture index as input. The output is in compressed VCF format (.vcf.gz). Aperture supports barcode based filter to ensure specificity. So if your dataset is produced by abundant sequencing and contains barcode as unique molecular identifier, parameters including `-1BS`, `-2BS`, `-1BL`, `-2BL`, `-1S` and `-2S` should be used to specify the location of barcodes in a read.  
+  
 The following diagram gives a brief introduction to barcode-related parameters:  
 ![Image text](https://ndownloader.figshare.com/files/25020722)
 ### Command-line arguments
@@ -115,4 +111,11 @@ PE|Count of paired-end reads supporting the breakpoint
 REFSR|Count of split reads supporting the reference junction
 VARSR|Count of split reads supporting the variant junction
 BAR|Count of cfDNA molecules supporting the breakpoint
-UBAR|Count of cfDNA molecules with only one read support
+UBAR|Count of cfDNA molecules with only one read support  
+  
+  
+# Publication
+For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
+
+**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
+Hongchao Liu, Guangyu Li, Xiaoyue Wang.
