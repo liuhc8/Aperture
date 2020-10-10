@@ -45,7 +45,7 @@ argument|description
 java -Xmx40g -jar fusion_test/aperture12.jar index -R hg19.fa -V dbsnp_common_hg19.vcf -O aperture_hg19 -T 30
 ```  
   
-
+  
 ## Detecting SVs and viral integrations
 
 Aperture needs a pair of FastQ files and an Aperture index as input. The output is in compressed VCF format (.vcf.gz). Aperture supports barcode based filter to ensure specificity. So if your dataset is produced by abundant sequencing and contains barcode as unique molecular identifier, parameters including `-1BS`, `-2BS`, `-1BL`, `-2BL`, `-1S` and `-2S` should be used to specify the location of barcodes in a read.  
@@ -78,6 +78,7 @@ curl -L curl -L https://ndownloader.figshare.com/files/25020827 --output test_R1
 curl -L curl -L https://ndownloader.figshare.com/files/25020830 --output test_R2.fq.gz
 java -Xmx30g -jar aperture.jar call -1 test_R1.fq.gz -2 test_R2.fq.gz -I aperture_hg19 -D ./ -P test -1BS 0 -2BS 0 -1BL 6 -2BL 0 -1S 0 -2S 0 -T 10
 ```
+  
   
 # Output interpretation
 In Aperture, all SVs are described as breakends and thus all the records in Aperture VCF are identified with the tag “SYTYPE=BND” in the INFO field.  
