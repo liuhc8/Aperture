@@ -4,7 +4,10 @@
 Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
   
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
-
+  
+  
+[Click here to download Aperture](https://github.com/i8q8r9/Aperture/releases)  
+  
 
 # Software and Hardware Requirements
 ## Software Requirements
@@ -20,9 +23,9 @@ Pre-compiled binaries are available at <https://github.com/i8q8r9/Aperture/relea
 ## Building an Aperture index
 Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built.   
   
-Human reference genome and the corresponding common SNP database can be downloaded here. [hg19](https://ndownloader.figshare.com/files/24731045) [hg38](https://ndownloader.figshare.com/files/24731048)  
+Human reference genome and the corresponding common SNP database can be downloaded here: [hg19](https://ndownloader.figshare.com/files/24731045) [hg38](https://ndownloader.figshare.com/files/24731048)  
   
-Pre-built Aperture indexs for hg19 and hg38 are available here. [hg19](https://ndownloader.figshare.com/files/24741890) [hg38](https://ndownloader.figshare.com/files/24744524)  
+Pre-built Aperture indexs for hg19 and hg38 are available here: [hg19](https://ndownloader.figshare.com/files/24741890) [hg38](https://ndownloader.figshare.com/files/24744524)  
   
 ### Command-line arguments
 ```
@@ -41,6 +44,7 @@ argument|description
 ```
 java -Xmx40g -jar fusion_test/aperture12.jar index -R hg19.fa -V dbsnp_common_hg19.vcf -O aperture_hg19 -T 30
 ```  
+  
 
 ## Detecting SVs and viral integrations
 
@@ -119,3 +123,5 @@ For citing Aperture and for an overview of the Aperture algorithms, refer to our
 
 **Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
 Hongchao Liu, Guangyu Li, Xiaoyue Wang.
+
+See the [publication page](./publication.md) for details about the simulation test.  
