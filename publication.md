@@ -11,7 +11,7 @@ Click the following links to download the simulation datasets used for evaluatin
   
 ctDNA dilution | R1,R2 | duplicated R1,R2 
 ------- | --------- | ---------
-<center>10%</center>|[R1](https://ndownloader.figshare.com/files/24746420) [R2](https://ndownloader.figshare.com/files/24746438)|[R1](https://ndownloader.figshare.com/files/24729959)  [R2](https://ndownloader.figshare.com/files/24730013)
+10%|[R1](https://ndownloader.figshare.com/files/24746420) [R2](https://ndownloader.figshare.com/files/24746438)|[R1](https://ndownloader.figshare.com/files/24729959)  [R2](https://ndownloader.figshare.com/files/24730013)
 1%|[R1](https://ndownloader.figshare.com/files/24746726) [R2](https://ndownloader.figshare.com/files/24746798)|[R1](https://ndownloader.figshare.com/files/24730118)  [R2](https://ndownloader.figshare.com/files/24730121)
 0.8%|[R1](https://ndownloader.figshare.com/files/24753731) [R2](https://ndownloader.figshare.com/files/24753674)|[R1](https://ndownloader.figshare.com/files/24730250)  [R2](https://ndownloader.figshare.com/files/24730259)
 0.6%|[R1](https://ndownloader.figshare.com/files/24753776) [R2](https://ndownloader.figshare.com/files/24753830)|[R1](https://ndownloader.figshare.com/files/24730175)  [R2](https://ndownloader.figshare.com/files/24730178)
