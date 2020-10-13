@@ -367,18 +367,4 @@ public class SVCandidate{
 		}
 	}
 
-	
-	public boolean lowSupport(int minSupport) {
-		return false;
-		//return this.splitCnt+this.peCnt<minSupport;
-	}
-	
-	public boolean lowMappingQuality(double kmerScore,double bpScore) {
-		return false;
-		//return (this.leftScoreAvg<kmerScore || this.rightScoreAvg<kmerScore || this.bpScoreAvg>bpScore);
-	}
-	
-	public boolean hasUniqueBar() {
-		return this.molecularCnt<1.1;
-	}
 }
