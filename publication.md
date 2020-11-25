@@ -3,7 +3,7 @@
 For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
 
 **Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
-Hongchao Liu, Guangyu Li, Xiaoyue Wang.  
+Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.  
   
 # Simulation Datasets Used for Perfomance Assessment  
   

@@ -1,7 +1,7 @@
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 # Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm
 
-Aperture is a new alignment-free SV caller designed for ctDNA sequencing with barcode adapters and multiple duplicates. Aperture applies k-mer based searching, fast intersection and breakpoint merging to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
+Aperture is a new alignment-free SV caller designed for cfDNA dataset. Aperture applies a unique strategy of k-mer based searching, fast breakpoint detection using binary labels and candidates clustering to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
   
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
   
@@ -17,7 +17,7 @@ To run Aperture, java 1.8 or later version must be installed in your system.
 * **Memory** Typically, Aperture needs 40GB in index building and 30GB in SV calling for human genome (hg19 or hg38). The exact requirement depends on many factors including reference genome, sequencing depth, cfDNA insert size and sample quality.
 
 # Running
-Aperture takes a Aperture index and a set of ctDNA read files and outputs SV results in VCF format.  
+Aperture takes a Aperture index and a set of cfDNA read files and outputs SV results in VCF format.  
 Pre-compiled binaries are available at <https://github.com/i8q8r9/Aperture/releases>. 
 
 ## Building an Aperture index
@@ -125,6 +125,6 @@ UBAR|Count of cfDNA molecules with only one read support
 For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
 
 **Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
-Hongchao Liu, Guangyu Li, Xiaoyue Wang.
+Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.
 
 See the [publication page](./publication.md) for details about the simulation test.  
