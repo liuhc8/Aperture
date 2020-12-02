@@ -122,9 +122,9 @@ UBAR|Count of cfDNA molecules with only one read support
   
   
 # Publication
-For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
+///For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:  
 
-**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
-Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.
+///**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**
+///Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.
 
-See the [publication page](./publication.md) for details about the simulation test.  
+See the [publication page](./publication.md) for links of the simulation datasets.  
