@@ -6,7 +6,7 @@ Aperture is a new alignment-free SV caller designed for cfDNA dataset. Aperture 
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
   
   
-[Click here to download Aperture](https://github.com/i8q8r9/Aperture/releases)  
+[Click here to download Aperture](https://github.com/liuhc8/Aperture/releases)  
   
 
 # Software and Hardware Requirements
@@ -18,7 +18,7 @@ To run Aperture, java 1.8 or later version must be installed in your system.
 
 # Running
 Aperture takes a Aperture index and a set of cfDNA read files and outputs SV results in VCF format.  
-Pre-compiled binaries are available at <https://github.com/i8q8r9/Aperture/releases>. 
+Pre-compiled binaries are available at <https://github.com/liuhc8/Aperture/releases>. 
 
 ## Building an Aperture index
 Aperture needs a indexed sequence file (in FASTA and FAI format) and a corresponding common SNP database (in VCF format) to build Aperture index. If FAI file is missing, you can use `faidx` command in `samtools` to create one. Aperture outputs a set of 5 files with suffixes `.ci` `.tt` `.km` `.long.km` and `.spaced.km`. These files together constitute the index, and the original FASTA files are no longer used by Aperture once the index is built.   
