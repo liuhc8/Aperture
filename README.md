@@ -80,6 +80,8 @@ curl -L curl -L https://ndownloader.figshare.com/files/25020827 --output test_R1
 curl -L curl -L https://ndownloader.figshare.com/files/25020830 --output test_R2.fq.gz
 java -Xmx30g -jar aperture.jar call -1 test_R1.fq.gz -2 test_R2.fq.gz -I aperture_hg19 -D ./ -P test -1BS 0 -2BS 0 -1BL 6 -2BL 0 -1S 0 -2S 0 -T 10
 ```
+The expected output `test.sv.vcf.gz` is available in `example` folder of this repository.  
+The expected runtime of this test sample is about 70 seconds using 4 CPU cores (Intel) and 32GB DDR4 memory.
   
   
 # Output interpretation
