@@ -202,8 +202,8 @@ public class BpClusterWorker implements Runnable{
 			
 			
 			if(isPE) {
-				if(leftCode!=rightCode) {
-			    	peList.add(new PESupport(leftCode,leftPos,leftConfi,leftKmers,rightCode,rightPos,rightConfi,rightKmers,r1Bar,r2Bar,flip,isSecondary));
+				if( (!(leftCode==rightCode && Math.abs(leftPos-rightPos)<500)) || leftConfi*rightConfi<0 ) {
+			    	peList.add(new PESupport(leftCode,leftPos,leftConfi,leftKmers,rightCode,rightPos,rightConfi,rightKmers,r1Bar,r2Bar,flip));
 				}
 			}else{
 				//System.out.println(seq.length+":"+bpLen+":"+seqLen);
@@ -295,6 +295,7 @@ public class BpClusterWorker implements Runnable{
 	private void mergeRightEnd() {
 		final ArrayList<BpSeq> seqListB=this.seqListB;
 		final ArrayList<BpSeq> seqListC=this.seqListC;
+		final ArrayList<PESupport> peListAfterMerge=this.peListAfterMerge;
 
 		Iterator<BpSeq> iter=seqListB.iterator();
 		while(iter.hasNext()) {
@@ -353,6 +354,10 @@ public class BpClusterWorker implements Runnable{
 				}
 				if(bestMergeBp!=null) {
 					bestMergeBp.mergeWith(bpI);
+				}else {
+					if((!(bpI.getLeftCode()==bpI.getRightCode() && Math.abs(bpI.getLeftPos()-bpI.getRightPos())<500))||(bpI.isLeftForward()!=bpI.isRightForward())) {
+				    	peListAfterMerge.add(new PESupport(bpI));     //######## convert split to PE
+					}
 				}
 			}else {
 				for(int j=seqListC.size()-1;j>=0;--j) {
@@ -762,13 +767,39 @@ public class BpClusterWorker implements Runnable{
 		}
 	}
 	
+	private boolean isLargeOrINVPE(PESupport pes,Segment leftSeg) {
+		final TranslationTable trTable=this.trTable;
+		if(pes.isLeftForward()!=pes.isRightForward()) {
+			return true;
+		}
+		if(pes.getLeftCode()==pes.getRightCode()) {
+			if(Math.abs(pes.getLeftPos()-pes.getRightPos())>1000) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+		Segment rightSeg=trTable.findSegment(pes.getRightCode());
+		if(leftSeg.chrom.equals(rightSeg.chrom)) {
+			long leftPos=leftSeg.start+pes.getLeftPos();
+			long rightPos=rightSeg.start+pes.getRightPos();
+			if(Math.abs(leftPos-rightPos)>1000) {
+				return true;
+			}else {
+				return false;
+			}
+		}else{
+			return true;
+		}
+	}
 	
-	private void updatePEAndAddPE() {
+	private void updatePEAndAddPE(Segment leftSeg) {
 		final ArrayList<PESupport> peListAfterMerge=this.peListAfterMerge;
 		final ArrayList<SplitSupport> bpListC=this.bpListC;
 		final SVCollection svCollection=this.svCollection;
 		
 		final int len=bpListC.size();
+
 		
 		for(PESupport pes:peListAfterMerge) {
 			int idx=Collections.binarySearch(bpListC, pes);
@@ -780,8 +811,12 @@ public class BpClusterWorker implements Runnable{
 				for(int i=idx;i<len;++i) {
 					SplitSupport bp=bpListC.get(i);
 					if(bp.getLeftPos()-pes.getLeftPos()>200) {
-						svCollection.adjustAndAdd(pes);
-						break;
+						if(isLargeOrINVPE(pes,leftSeg)) {
+							svCollection.adjustAndAdd(pes);
+							break;
+						}else {
+							break;
+						}
 					}
 					if(bp.similarWith(pes)) {
 						bp.mergeWith(pes);
@@ -792,8 +827,12 @@ public class BpClusterWorker implements Runnable{
 				for(int i=idx;i>=0;--i) {
 					SplitSupport bp=bpListC.get(i);
 					if(pes.getLeftPos()-bp.getLeftPos()>200) {
-						svCollection.adjustAndAdd(pes);
-						break;
+						if(isLargeOrINVPE(pes,leftSeg)) {
+							svCollection.adjustAndAdd(pes);
+							break;
+						}else {
+							break;
+						}
 					}
 					if(bp.similarWith(pes)) {
 						bp.mergeWith(pes);
@@ -873,7 +912,7 @@ public class BpClusterWorker implements Runnable{
 	        		    mergeCluster();
 	        		    mergeClusterAgain();
 	    		    }
-	    		    updatePEAndAddPE();
+	    		    updatePEAndAddPE(segment);
 	    		    addSplit();
 				}
 			}

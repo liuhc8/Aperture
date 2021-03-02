@@ -141,13 +141,6 @@ public class SVCollection{
 		private void merge(ArrayList<SVSupport> inputList,ArrayList<SVSupport> resList) {
 			final int cnt=inputList.size();
 			
-			/*for(int j=0;j<cnt;++j) {
-				SVSupport svJ=inputList.get(j);
-				if(svJ instanceof SplitSupport) {
-					resList.add(svJ);
-				}
-			}*/
-			
 			for(int j=0;j<cnt;++j) {
 				SVSupport svJ=inputList.get(j);
 				if(svJ==null) {
@@ -174,9 +167,12 @@ public class SVCollection{
 						break;
 					}
 				}
-				if(svJ!=null && svJ instanceof SplitSupport) {
+				if(svJ!=null) {
 					resList.add(svJ);
 				}
+				//if(svJ!=null && svJ instanceof SplitSupport) {
+				//	resList.add(svJ);
+				//}
 			}
 		}
 		
@@ -223,14 +219,13 @@ public class SVCollection{
 					svc.setSVNo(i+accumulatedCnt);
 					synchronized(leftVcfList) {
 						leftVcfList.add(svc.toVCFRecordLeft());
+						//leftVcfList.add(svc.toVCFTemp());
 					}
 					int rightIdx=trTable.getIndexNo(svc.getRightCode());
 					ArrayList<VCFRecord> rightVcfList=(ArrayList<VCFRecord>)vcfRecordMatrix[rightIdx];
 					synchronized(rightVcfList) {
 						rightVcfList.add(svc.toVCFRecorRight());
 					}
-					//leftVcfList.add(svc.toVCFTemp());
-					
 				}
 			}
 		}

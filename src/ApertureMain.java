@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.cli.*;
 
 public class ApertureMain {
-	public final static String APERTURE_VERSION="1.0";
+	public final static String APERTURE_VERSION="1.1";
 	public static int lCode,lPos,rCode,rPos;
 	public static boolean debug=false;
 	

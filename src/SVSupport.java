@@ -38,9 +38,29 @@ public abstract class SVSupport implements Comparable<SVSupport>{
         }else {
     	    this.r1BarList[0]=r1Bar;
      	    this.r2BarList[0]=r2Bar;
-     	     this.flipList[0]=flip;
+     	    this.flipList[0]=flip;
      	    this.barCnt=1;
         }
+	}
+	
+	protected SVSupport(SVSupport sv) {
+		this.flag=sv.flag;
+		this.rightVague=sv.rightVague;
+		this.leftForward=sv.leftForward;
+		this.rightForward=sv.rightForward;
+		this.leftCode=sv.leftCode;
+		this.leftPos=sv.leftPos;
+		this.leftKmers=sv.leftKmers;
+		this.rightCode=sv.rightCode;
+		this.rightPos=sv.rightPos;
+		this.rightKmers=sv.rightKmers;
+		this.leftScoreSum=sv.leftScoreSum;
+		this.rightScoreSum=sv.rightScoreSum;
+		this.r1BarList=sv.r1BarList;
+		this.r2BarList=sv.r2BarList;
+		this.flipList=sv.flipList;
+		this.barCnt=sv.barCnt;
+		this.longBarList=sv.longBarList;
 	}
 
 	public void setLeftSmallFlag() {
@@ -176,13 +196,14 @@ public abstract class SVSupport implements Comparable<SVSupport>{
 			return false;
 		}else {
 			if(this instanceof SplitSupport && sv instanceof SplitSupport) {
-				if(this.leftCode==this.rightCode && Math.abs(this.leftPos-this.rightPos)<200) {
+				if(this.leftCode==this.rightCode && Math.abs(this.leftPos-this.rightPos)<100) {
 					return Math.abs(this.leftPos-sv.leftPos)<15 && Math.abs(this.rightPos-sv.rightPos)<15;
 				}else {
 					return Math.abs(this.leftPos-sv.leftPos)<100 && Math.abs(this.rightPos-sv.rightPos)<100;
 				}
 			}else {
-				return Math.abs(this.leftPos-sv.leftPos)<200 && Math.abs(this.rightPos-sv.rightPos)<200;
+				return (Math.abs(this.leftPos-sv.leftPos)<200 && Math.abs(this.rightPos-sv.rightPos)<50) 
+						|| (Math.abs(this.leftPos-sv.leftPos)<50 && Math.abs(this.rightPos-sv.rightPos)<200);
 			}
 		}
 	}
@@ -237,6 +258,7 @@ class SplitSupport extends SVSupport{
 			this.rightCnt=rightPos==-1?(short)0:(short)1;
 		}
 	}
+	
 	
 	@Override
 	public boolean mergeWith(SplitSupport bp) {	
@@ -512,8 +534,9 @@ class SplitSupport extends SVSupport{
         }
         if (anObject instanceof SplitSupport) {
         	SplitSupport anotherSplit = (SplitSupport)anObject;;
-            if (seq.equals(anotherSplit.seq) && this.leftCode==anotherSplit.leftCode && this.rightCode==anotherSplit.rightCode 
-            		&& this.leftPos==anotherSplit.leftPos && this.rightPos==anotherSplit.rightPos) {
+            if (seq.equals(anotherSplit.seq) && this.leftCode==anotherSplit.leftCode 
+            		&& this.rightCode==anotherSplit.rightCode && this.leftPos==anotherSplit.leftPos 
+            		&& this.rightPos==anotherSplit.rightPos && this.hasSameDirect(anotherSplit)) {
                 return true;
             }
         }
@@ -528,10 +551,16 @@ class PESupport extends SVSupport{
 	private short peCnt;
 	
 	public PESupport(int leftCode,int leftPos,short leftConfi,short leftKmers,
-			         int rightCode,int rightPos,short rightConfi,short rightKmers,int r1Bar,int r2Bar,boolean flip,boolean isSecondary) {
-		super(leftCode,leftPos,leftConfi,leftKmers,rightCode,rightPos,rightConfi,rightKmers,true,r1Bar,r2Bar,flip,isSecondary);
+			         int rightCode,int rightPos,short rightConfi,short rightKmers,int r1Bar,int r2Bar,boolean flip) {
+		super(leftCode,leftPos,leftConfi,leftKmers,rightCode,rightPos,rightConfi,rightKmers,true,r1Bar,r2Bar,flip,false);
 		
-		this.peCnt=isSecondary?(short)0:(short)1;
+		this.peCnt=1;
+	}
+	
+	public PESupport(SplitSupport vagueSplit) {
+		super(vagueSplit);
+		this.peCnt=(short)vagueSplit.getSplitSupport();
+		
 	}
 	
 	public int getPECnt() {
@@ -644,7 +673,8 @@ class PESupport extends SVSupport{
         if (anObject instanceof PESupport) {
         	PESupport anotherPE = (PESupport)anObject;;
             if (this.leftCode==anotherPE.leftCode && this.rightCode==anotherPE.rightCode 
-            		&& this.leftPos==anotherPE.leftPos && this.rightPos==anotherPE.rightPos) {
+            		&& this.leftPos==anotherPE.leftPos && this.rightPos==anotherPE.rightPos
+            		&& this.hasSameDirect(anotherPE)) {
                 return true;
             }
         }

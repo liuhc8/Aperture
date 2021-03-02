@@ -1,7 +1,8 @@
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class SVCandidate{
-	private static double BAR_CNT_THRESHOLD=2,MAX_BP_SCORE=2.0;
+	private static double BAR_MINUS_UNI_THRESHOLD=2.0d,MAX_BP_SCORE=2.0d;
 	private static int MIN_INDEL_LEN=50;
 	
 	private int svNo;
@@ -34,7 +35,7 @@ public class SVCandidate{
 	}
 	
 	public static void setThreshold(boolean duoBarcode,int minIndelLen,double maxBpScore) {
-		BAR_CNT_THRESHOLD=duoBarcode?2.5:2;
+		BAR_MINUS_UNI_THRESHOLD=duoBarcode?2.499d:1.999d;
 		MIN_INDEL_LEN=minIndelLen;
 		MAX_BP_SCORE=maxBpScore;
 	}
@@ -142,8 +143,6 @@ public class SVCandidate{
 		this.varLeft=buildVarStr(this.rightChrom,String.valueOf(this.rightPos),"N",leftForward,rightForward);;
 		this.varRight=buildVarStr(this.leftChrom,String.valueOf(this.leftPos),"N",!rightForward,!leftForward);
 		this.varSeqLen=0;
-		this.refLeft=0;
-		this.refRight=0;
 	}
 	
 	public void setUMI(double molecularCnt,int uniqueBarCnt) {
@@ -161,7 +160,7 @@ public class SVCandidate{
 		String tab="\t";
 		sb.append(leftChrom).append(tab).append(leftPos).append(tab).append("aperture").append(svNo).append("_1").append(tab).append(refLeft)
 		  .append(tab).append(varLeft).append(tab).append(".").append(tab);
-		if(passFakeBpFilter && passEvidenceFilter && !isSmallEvent && !isPEOnly) {
+		if(passFakeBpFilter && passEvidenceFilter && !isSmallEvent) {
 			sb.append("PASS");
 		}else {
 			if(!passEvidenceFilter) {
@@ -173,12 +172,18 @@ public class SVCandidate{
 			if(isSmallEvent) {
 				sb.append("SMALL_EVENT;");
 			}
-			if(isPEOnly) {
+			/*if(isPEOnly) {
 				sb.append("PE_ONLY;");
-			}
+			}*/
 			sb.setLength(sb.length()-1);    //delete last ";"
 		}
-		sb.append(tab).append("SVTYPE=BND;STRANDS=");
+		sb.append(tab);
+		if(isPEOnly) {
+			sb.append("IMPRECISE;");
+		}else {
+			sb.append("PRECISE;");
+		}
+		sb.append("SVTYPE=BND;STRANDS=");
 		if(this.leftForward) {
 			sb.append("+");
 		}else {
@@ -190,7 +195,7 @@ public class SVCandidate{
 			sb.append("-");
 		}
 		sb.append(";REFQUA=").append(String.format("%.2f", this.leftScoreAvg)).append(";VARQUA=").append(String.format("%.2f", this.rightScoreAvg)).append(";REFKMER=").append(this.leftKmers)
-		  .append(";VARKMER=").append(this.rightKmers).append(";BPSEQQUA=").append(String.format("%.2f", this.bpScoreAvg)).append(";PARID=").append(this.svNo).append("_2");
+		  .append(";VARKMER=").append(this.rightKmers).append(";BPSEQQUA=").append(String.format("%.2f", this.bpScoreAvg)).append(";PARID=").append("aperture").append(this.svNo).append("_2");
 		if(this.homSeq!=null) {
 			sb.append(";HOMLEN=").append(this.homSeq.length()).append(";HOMSEQ=").append(this.homSeq);
 		}
@@ -215,7 +220,7 @@ public class SVCandidate{
 		String tab="\t";
 		sb.append(rightChrom).append(tab).append(rightPos).append(tab).append("aperture").append(svNo).append("_2").append(tab).append(refRight)
 		  .append(tab).append(varRight).append(tab).append(".").append(tab);
-		if(passFakeBpFilter && passEvidenceFilter && !isSmallEvent && !isPEOnly) {
+		if(passFakeBpFilter && passEvidenceFilter && !isSmallEvent) {
 			sb.append("PASS");
 		}else {
 			if(!passEvidenceFilter) {
@@ -227,12 +232,18 @@ public class SVCandidate{
 			if(isSmallEvent) {
 				sb.append("SMALL_EVENT;");
 			}
-			if(isPEOnly) {
+			/*if(isPEOnly) {
 				sb.append("PE_ONLY;");
-			}
+			}*/
 			sb.setLength(sb.length()-1);    //delete last ";"
 		}
-		sb.append(tab).append("SVTYPE=BND;STRANDS=");
+		sb.append(tab);
+		if(isPEOnly) {
+			sb.append("IMPRECISE;");
+		}else {
+			sb.append("PRECISE;");
+		}
+		sb.append("SVTYPE=BND;STRANDS=");
 		if(this.rightForward) {
 			sb.append("-");
 		}else {
@@ -350,14 +361,16 @@ public class SVCandidate{
 	}
 	
 	public boolean passEvidenceFilter() {
-		if((double)leftKmers/(leftCnt+peCnt)>=3 && (double)rightKmers/(rightCnt+peCnt)>=3 && bpScoreAvg<=MAX_BP_SCORE) {
-			if(molecularCnt-(double)uniqueBarCnt/2>=SVCandidate.BAR_CNT_THRESHOLD && leftScoreAvg+rightScoreAvg>7.2 && (double)leftKmers/(leftCnt+peCnt)>=4 && (double)rightKmers/(rightCnt+peCnt)>=4) {
+
+		if((double)leftKmers/(leftCnt+peCnt)>2.999d && (double)rightKmers/(rightCnt+peCnt)>2.999d && bpScoreAvg<MAX_BP_SCORE && uniqueBarCnt/molecularCnt<0.801d) {
+			if(molecularCnt-(double)uniqueBarCnt/2>SVCandidate.BAR_MINUS_UNI_THRESHOLD && leftScoreAvg+rightScoreAvg>7.2d && (double)leftKmers/(leftCnt+peCnt)>3.999d && (double)rightKmers/(rightCnt+peCnt)>3.999d) {
 				return true;
-			}else if(molecularCnt-(double)uniqueBarCnt/2>5 && leftScoreAvg+rightScoreAvg>6.7) {
+			}else if(molecularCnt-(double)uniqueBarCnt/2>5.0d && leftScoreAvg+rightScoreAvg>6.7d) {
 				return true;
-			}else if(molecularCnt-(double)uniqueBarCnt/2>7 && leftScoreAvg+rightScoreAvg>6.2) {
+			}else if(molecularCnt-(double)uniqueBarCnt/2>7.0d && leftScoreAvg+rightScoreAvg>6.2d) {
 				return true;
-			}else if(splitCnt>=8 && leftScoreAvg+rightScoreAvg>9.5 && (double)leftKmers/(leftCnt+peCnt)>=8 && (double)rightKmers/(rightCnt+peCnt)>=8 && molecularCnt>=2) {
+			//}else if(splitCnt>=8 && leftScoreAvg+rightScoreAvg>9.5 && (double)leftKmers/(leftCnt+peCnt)>=8 && (double)rightKmers/(rightCnt+peCnt)>=8 && molecularCnt>=2) {
+			}else if(splitCnt>=4 && leftScoreAvg+rightScoreAvg>9.5d && (double)leftKmers/(leftCnt+peCnt)>5.999d && (double)rightKmers/(rightCnt+peCnt)>5.999d && molecularCnt>1.999d) {
 				return true;
 			}else {
 				return false;
