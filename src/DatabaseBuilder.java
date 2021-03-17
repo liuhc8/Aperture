@@ -364,7 +364,6 @@ public class DatabaseBuilder {
 			    byte[] seq=new byte[220];
 			    long[] kmerList=new long[200];
 			    RefSequence ref=null;
-			    Segment segLast=null;
 			    SNP[] snpArray=null;
 			    while((snpArray=vcfReader.readVCF())!=null) {
 			    	for(SNP snp:snpArray) {
@@ -372,10 +371,11 @@ public class DatabaseBuilder {
 			    			break;
 			    		}
 			    		Segment seg=trTable.findSegment(snp.chrom, snp.pos);
-			    		if(!seg.equals(segLast)) {
-			    			ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
+			    		if(seg==null) {
+			    			continue;
 			    		}
 			    		
+			    		ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
 			    		int pos=snp.pos-seg.start-1;
 			    		
 			    		int refLen=snp.ref.length;
@@ -436,7 +436,7 @@ public class DatabaseBuilder {
 		
 		longkc.compact(nWorkers);
 		
-		System.out.println("longkc size::"+longkc.size());
+		//System.out.println("longkc size::"+longkc.size());
 		return longkc;
 	}
 	
@@ -458,7 +458,7 @@ public class DatabaseBuilder {
 		
 		spacedkc.compact(threads);
 		
-		System.out.println("spacedkc size::"+spacedkc.size());
+		//System.out.println("spacedkc size::"+spacedkc.size());
 		return spacedkc;
 	}
 	

@@ -370,7 +370,7 @@ public class SVCandidate{
 			}else if(molecularCnt-(double)uniqueBarCnt/2>7.0d && leftScoreAvg+rightScoreAvg>6.2d) {
 				return true;
 			//}else if(splitCnt>=8 && leftScoreAvg+rightScoreAvg>9.5 && (double)leftKmers/(leftCnt+peCnt)>=8 && (double)rightKmers/(rightCnt+peCnt)>=8 && molecularCnt>=2) {
-			}else if(splitCnt>=4 && leftScoreAvg+rightScoreAvg>9.5d && (double)leftKmers/(leftCnt+peCnt)>5.999d && (double)rightKmers/(rightCnt+peCnt)>5.999d && molecularCnt>1.999d) {
+			}else if(splitCnt>6 && leftScoreAvg+rightScoreAvg>9.5d && (double)leftKmers/(leftCnt+peCnt)>6.999d && (double)rightKmers/(rightCnt+peCnt)>6.999d && molecularCnt>1.999d) {
 				return true;
 			}else {
 				return false;
