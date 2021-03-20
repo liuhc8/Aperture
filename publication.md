@@ -1,15 +1,15 @@
-# Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm  
+# Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA  
   
 [comment]: <> (For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:)  
 
-[comment]: <> (**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**)
+[comment]: <> (**Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA**)
 [comment]: <> (Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.)  
   
 # Simulation Datasets Used for Perfomance Assessment  
   
 Click the following links to download the simulation datasets used for evaluating performances in this article:  
   
-ctDNA dilution | R1,R2 | R1,R2 with PCR duplicates and barcode adapters | Aperture output
+ctDNA dilution | R1,R2 | R1,R2 with PCR duplicates and barcode adapters | Aperture outputs
 ------- | --------- | --------- | ---------
 10%|[R1](https://ndownloader.figshare.com/files/24746420) [R2](https://ndownloader.figshare.com/files/24746438)|[R1](https://ndownloader.figshare.com/files/26914610)  [R2](https://ndownloader.figshare.com/files/24730013)|[SV predicts](https://ndownloader.figshare.com/files/26914967)
 1%|[R1](https://ndownloader.figshare.com/files/24746726) [R2](https://ndownloader.figshare.com/files/24746798)|[R1](https://ndownloader.figshare.com/files/26914715)  [R2](https://ndownloader.figshare.com/files/24730121)|[SV predicts](https://ndownloader.figshare.com/files/26914964)

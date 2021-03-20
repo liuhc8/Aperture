@@ -1,7 +1,7 @@
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
-# Aperture:  Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm
+# Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA
 
-Aperture is a new alignment-free SV caller designed for cfDNA dataset. Aperture applies a unique strategy of k-mer based searching, fast breakpoint detection using binary labels and candidates clustering to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in fastq format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
+Aperture is a new alignment-free SV caller designed for cfDNA dataset. Aperture applies a unique strategy of k-mer based searching, fast breakpoint detection using binary labels and candidates clustering to detect SVs and viral integrations in high sensitivity, especially when junctions span repetitive regions, followed by a barcode based filter to ensure specificity. Aperture takes paired-end reads in FASTQ format as inputs and reports all SVs and viral integrations in VCF 4.2 format.  
   
 If you have any trouble running Aperture, please raise an issue using the Issues tab above.  
   
@@ -129,7 +129,7 @@ UBAR|Count of cfDNA molecules with only one read support
 # Publication
 [comment]: <> (For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:)  
 
-[comment]: <> (**Aperture: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm.**)
+[comment]: <> (**Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA.**)
 [comment]: <> (Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.)
 
 See the [publication page](./publication.md) for links of the simulation datasets.  
