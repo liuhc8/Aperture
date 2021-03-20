@@ -82,10 +82,10 @@ curl -L https://ndownloader.figshare.com/files/26914970 --output test_bar_R1.fq.
 curl -L https://ndownloader.figshare.com/files/26914973 --output test_bar_R2.fq.gz
 curl -L https://ndownloader.figshare.com/files/26914805 --output chr21.tar.gz
 tar -vxf chr21.tar.gz
-java -Xmx30g -jar aperture.jar call -1 test_bar_R1.fq.gz -2 test_bar_R2.fq.gz -I hg38_small -D ./ -P test -1BS 0 -2BS 0 -1BL 8 -2BL 0 -1S 8 -2S 0 -T 10
+java -Xmx30g -jar aperture.jar call -1 test_bar_R1.fq.gz -2 test_bar_R2.fq.gz -I hg38_small -D ./ -P test -1BS 0 -2BS 0 -1BL 8 -2BL 0 -1S 8 -2S 0 -T 4
 ```
 The expected output `test_toyindex_ap12.sv.vcf.gz` is available in `example` folder of this repository.  
-The expected runtime of this test sample is about 70 seconds using 4 CPU cores (Intel) and 32GB DDR4 memory.
+The expected runtime of this test sample is about 15 seconds using 4 threads.
   
   
 # Output interpretation
