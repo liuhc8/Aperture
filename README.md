@@ -99,7 +99,6 @@ ID | Description
 LOW_QUAL|Low quality call
 FAKE_BP|False positive variant caused by imprecise k-mer based mapping
 SMALL_EVENT|Event size is smaller than the minimum reportable size
-PE_ONLY|No soft clips support this variant
 
 ## VCF INFO Fields
 ID | Description
