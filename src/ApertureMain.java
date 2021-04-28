@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.cli.*;
 
 public class ApertureMain {
-	public final static String APERTURE_VERSION="1.1";
+	public final static String APERTURE_VERSION="1.2";
 	public static int lCode,lPos,rCode,rPos;
 	public static boolean debug=false;
 	//public static Integer sync=new Integer(0);
@@ -169,7 +169,7 @@ public class ApertureMain {
 	
 	private void showApertureHelp() {
 		System.out.println("Aperture Help");
-		System.out.println("Description: Accurate detection of structural variations and viral integrations in circulating tumor DNA using an alignment-free algorithm");
+		System.out.println("Description: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA");
 		System.out.println("Contact: Hongchao Liu <i8q8r9@live.com>");
 		System.out.println("");
 		System.out.println("Usage: java -jar aperture.jar <command> <arguments>");
@@ -192,7 +192,7 @@ public class ApertureMain {
         opt.setRequired(true);
         options.addOption(opt);
         
-        opt = new Option("V", "vcf", true, "Common SNPs database for the corresponding genome");
+        opt = new Option("V", "vcf", true, "Common SNPs from dbSNP database in VCF format");
         opt.setRequired(true);
         options.addOption(opt);
         
