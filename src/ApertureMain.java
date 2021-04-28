@@ -12,6 +12,7 @@ public class ApertureMain {
 	public final static String APERTURE_VERSION="1.1";
 	public static int lCode,lPos,rCode,rPos;
 	public static boolean debug=false;
+	//public static Integer sync=new Integer(0);
 	
 	private void readClassify(String r1,String r2,String index,String workDir,String projectName,
 			                 int r1BarStart,int r2BarStart,int r1BarLen,int r2BarLen,int r1InsStart,int r2InsStart,int nthreads,int mergeK,
@@ -335,7 +336,7 @@ public class ApertureMain {
     				long time1=System.currentTimeMillis();		
     				aperture.readClassify(commandLine.getOptionValue("1"),commandLine.getOptionValue("2"),indexPath,
     						commandLine.getOptionValue("D"),commandLine.getOptionValue("P"),
-    						r1BarStart,r2BarStart,r1BarLen,r2BarLen,r1InsStart,r2InsStart,threads,11,50,0.25,2.0,args);
+    						r1BarStart,r2BarStart,r1BarLen,r2BarLen,r1InsStart,r2InsStart,threads,11,50,0.25,3.0,args);
     				long time2=System.currentTimeMillis();  
     		    	long interval=(time2-time1)/1000;   	
     				System.out.println("SV calling workflow successfully completed.");

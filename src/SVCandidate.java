@@ -2,8 +2,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class SVCandidate{
-	private static double BAR_MINUS_UNI_THRESHOLD=2.0d,MAX_BP_SCORE=2.0d;
-	private static int MIN_INDEL_LEN=50;
+	private static double CLUSTER_RELIABILITY,MAX_BP_SCORE;
+	private static int MIN_SV_LEN;
 	
 	private int svNo;
 	private boolean leftForward,rightForward,passFakeBpFilter;
@@ -35,8 +35,8 @@ public class SVCandidate{
 	}
 	
 	public static void setThreshold(boolean duoBarcode,int minIndelLen,double maxBpScore) {
-		BAR_MINUS_UNI_THRESHOLD=duoBarcode?2.499d:1.999d;
-		MIN_INDEL_LEN=minIndelLen;
+		CLUSTER_RELIABILITY=duoBarcode?2.499d:1.999d;
+		MIN_SV_LEN=minIndelLen;
 		MAX_BP_SCORE=maxBpScore;
 	}
 	
@@ -355,16 +355,17 @@ public class SVCandidate{
 			return false;
 		}else{
 			int varLen=Math.abs(this.rightPos-this.leftPos);
-			//return Math.abs(this.rightPos-this.leftPos)<MIN_INDEL_LEN && this.varSeqLen-1<MIN_INDEL_LEN;
-			return varLen<MIN_INDEL_LEN || Math.abs(varLen-this.varSeqLen)<10;
+			return varLen<MIN_SV_LEN && this.varSeqLen-1<MIN_SV_LEN;
+			//return varLen<MIN_INDEL_LEN || Math.abs(varLen-this.varSeqLen)<10;
 		}
 	}
 	
 	public boolean passEvidenceFilter() {
 
 		if((double)leftKmers/(leftCnt+peCnt)>2.999d && (double)rightKmers/(rightCnt+peCnt)>2.999d && bpScoreAvg<MAX_BP_SCORE && uniqueBarCnt/molecularCnt<0.801d) {
-			if(molecularCnt-(double)uniqueBarCnt/2>SVCandidate.BAR_MINUS_UNI_THRESHOLD && leftScoreAvg+rightScoreAvg>7.2d && (double)leftKmers/(leftCnt+peCnt)>3.999d && (double)rightKmers/(rightCnt+peCnt)>3.999d) {
-				return true;
+			if(molecularCnt-(double)uniqueBarCnt/2>CLUSTER_RELIABILITY && leftScoreAvg+rightScoreAvg>7.2d && (double)leftKmers/(leftCnt+peCnt)>3.999d && (double)rightKmers/(rightCnt+peCnt)>3.999d) {
+			//if(molecularCnt-(double)uniqueBarCnt/2>CLUSTER_RELIABILITY && leftScoreAvg+rightScoreAvg>7.2d ) {
+			    return true;
 			}else if(molecularCnt-(double)uniqueBarCnt/2>5.0d && leftScoreAvg+rightScoreAvg>6.7d) {
 				return true;
 			}else if(molecularCnt-(double)uniqueBarCnt/2>7.0d && leftScoreAvg+rightScoreAvg>6.2d) {

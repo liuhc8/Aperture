@@ -132,6 +132,9 @@ public class TranslationTable implements Serializable{
 
 	Segment findSegment(String chr,int pos) {
 		Scope scope=this.scopeMap.get(chr);
+		if(scope==null) {
+			return null;
+		}
 		int index=Arrays.binarySearch(this.start, scope.start, scope.end+1, pos);
 		if(index>=0) {
 			return new Segment(chrom[index],start[index],end[index],geneCode[index],ref[index]);
