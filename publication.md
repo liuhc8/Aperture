@@ -38,10 +38,5 @@ Read length | R1,R2 | Aperture outputs
 125bp|[R1](https://ndownloader.figshare.com/files/28457277) [R2](https://ndownloader.figshare.com/files/28457262)|[SV predicts](https://ndownloader.figshare.com/files/28482231)
    
    
-   
-## The simulated sample with Insertions & Deletions:
-R1,R2 | Aperture output
-------- | ---------
-[R1](https://ndownloader.figshare.com/files/28480839) [R2](https://ndownloader.figshare.com/files/28480845)|[SV predicts](https://ndownloader.figshare.com/files/28482255)
 
    
