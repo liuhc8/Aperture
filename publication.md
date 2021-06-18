@@ -8,9 +8,10 @@
 # Simulation Datasets Used for Perfomance Assessment  
   
 Click the following links to download the simulation datasets used for evaluating performances in this article:  
-  
+   
+   
 ctDNA dilution | R1,R2 | Aperture outputs
-------- | --------- | --------- | ---------
+------- | --------- | ---------
 10%|[R1](https://ndownloader.figshare.com/files/26914610)  [R2](https://ndownloader.figshare.com/files/24730013)|[SV predicts](https://ndownloader.figshare.com/files/28482234)
 1%|[R1](https://ndownloader.figshare.com/files/26914715)  [R2](https://ndownloader.figshare.com/files/24730121)|[SV predicts](https://ndownloader.figshare.com/files/28482237)
 0.8%|[R1](https://ndownloader.figshare.com/files/26914718)  [R2](https://ndownloader.figshare.com/files/24730259)|[SV predicts](https://ndownloader.figshare.com/files/28482252)
