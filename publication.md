@@ -10,6 +10,7 @@
 Click the following links to download the simulation datasets used for evaluating performances in this article:  
    
    
+## The simulated samples with various ctDNA dilutions:
 ctDNA dilution | R1,R2 | Aperture outputs
 ------- | --------- | ---------
 10%|[R1](https://ndownloader.figshare.com/files/26914610)  [R2](https://ndownloader.figshare.com/files/24730013)|[SV predicts](https://ndownloader.figshare.com/files/28482234)
@@ -21,7 +22,7 @@ ctDNA dilution | R1,R2 | Aperture outputs
 0.1%|[R1](https://ndownloader.figshare.com/files/26914772)  [R2](https://ndownloader.figshare.com/files/24730523)|[SV predicts](https://ndownloader.figshare.com/files/28482240)
   
    
-   
+## The simulated samples with various sequencing depths:
 Sequencing depth | R1,R2 | Aperture outputs
 ------- | --------- | ---------
 1600x|[R1](https://ndownloader.figshare.com/files/28456884) [R2](https://ndownloader.figshare.com/files/28456914)|[SV predicts](https://ndownloader.figshare.com/files/28482489)
@@ -30,7 +31,7 @@ Sequencing depth | R1,R2 | Aperture outputs
 4000x|[R1](https://ndownloader.figshare.com/files/28470351) [R2](https://ndownloader.figshare.com/files/28470342)|[SV predicts](https://ndownloader.figshare.com/files/28482498)
    
    
-   
+## The simulated samples with various read lengths:
 Read length | R1,R2 | Aperture outputs
 ------- | --------- | ---------
 100bp|[R1](https://ndownloader.figshare.com/files/28470348) [R2](https://ndownloader.figshare.com/files/28470339)|[SV predicts](https://ndownloader.figshare.com/files/28482228)
@@ -38,7 +39,7 @@ Read length | R1,R2 | Aperture outputs
    
    
    
-The simulated sample with Insertions & Deletions:
+## The simulated sample with Insertions & Deletions:
 R1,R2 | Aperture output
 ------- | ---------
 [R1](https://ndownloader.figshare.com/files/28480839) [R2](https://ndownloader.figshare.com/files/28480845)|[SV predicts](https://ndownloader.figshare.com/files/28482255)
