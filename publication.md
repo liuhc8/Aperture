@@ -1,9 +1,9 @@
 # Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA  
   
-[comment]: <> (For citing Aperture and for an overview of the Aperture algorithms, refer to our open access article:)  
+For citing Aperture and for an overview of the Aperture algorithms, refer to the following article: 
 
-[comment]: <> (**Aperture: Alignment-free detection of structural variations and viral integrations in circulating tumor DNA**)
-[comment]: <> (Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang.)  
+##Aperture: alignment-free detection of structural variations and viral integrations in circulating tumor DNA. 
+Hongchao Liu, Huihui Yin, Guangyu Li, Junling Li, Xiaoyue Wang. [Brief Bioinform. 2021;bbab290. doi:10.1093/bib/bbab290](https://doi.org/10.1093/bib/bbab290) 
   
 # Simulation Datasets Used for Perfomance Assessment  
   
