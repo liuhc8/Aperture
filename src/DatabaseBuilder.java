@@ -48,7 +48,6 @@ public class DatabaseBuilder {
 	
 	public void buildDatabase() throws IllegalPositionException, IllegalBioFileException,IOException, InterruptedException {
 		FastaReader faReader=loadFasta();
-		VCFReader vcfReader=loadVCF();
 		TranslationTable trTable=null;
 		FileOutputStream kmerOut=null;
 		
@@ -98,16 +97,46 @@ public class DatabaseBuilder {
     		}
     		
     		System.out.print("Building k-mer library...");
-	    	KmerCollection kc=insertKmer(trTable,faReader,vcfReader);
-	    	addSNPs(trTable,kc,faReader,vcfReader);
+	    	KmerCollection kc=insertKmer(trTable,faReader);
+	    	
+	    	VCFReader vcfReader=null;
+	    	try {
+	    		vcfReader=loadVCF();
+	    		addSNPs(trTable,kc,faReader,vcfReader);
+	    	}finally {
+	    		if(vcfReader!=null) {
+	    			vcfReader.close();
+	    		}
+	    	}
+	    	
 	    	compact(kc);
     		updateKmerPos(kc,trTable,faReader);
+    		
+    		try {
+    			vcfReader=loadVCF();
+    			updateSNPsPos(trTable,kc,faReader,vcfReader);
+    		}finally {
+    			if(vcfReader!=null) {
+	    			vcfReader.close();
+	    		}
+    		}
+
     		setKmerScore(kc,trTable,faReader);
 	    	System.out.println("Done!");
     		
 	    	System.out.print("Building long k-mer library...");
 	    	LongKmerCollection longkc=addLongKmer(trTable,kc,faReader);
 	    	updateLongKmerPos(longkc,trTable,faReader);
+	    	
+	    	try {
+	    		vcfReader=loadVCF();
+	    		updateLongKmerSNPsPos(longkc,trTable,faReader, vcfReader);
+	    	}finally {
+    			if(vcfReader!=null) {
+	    			vcfReader.close();
+	    		}
+    		}
+	    	
 	    	System.out.println("Done!");
 	    	
 	    	try {
@@ -134,6 +163,16 @@ public class DatabaseBuilder {
 	    	System.out.print("Building spaced seed library...");
 	    	LongKmerCollection spacedkc=addSpacedSeed(trTable,kc,faReader);
 	    	updateSpacedSeedPos(spacedkc,trTable,faReader);
+	    	
+	    	try {
+	    		vcfReader=loadVCF();
+	    		updateSpacedSeedSNPsPos(spacedkc,trTable,faReader, vcfReader);
+	    	}finally {
+    			if(vcfReader!=null) {
+	    			vcfReader.close();
+	    		}
+    		}
+	    	
 	    	System.out.println("Done!");
 	    	
 	    	try {
@@ -179,8 +218,9 @@ public class DatabaseBuilder {
      		kc=null;
 		
     	}finally {
-	    	faReader.close();
-	    	vcfReader.close();
+    		if(faReader!=null) {
+	        	faReader.close();
+	    	}
     	}
      	
 	}
@@ -286,7 +326,7 @@ public class DatabaseBuilder {
 		trTable.addSeperator(chrom,start,end,code,binSeq);
 	}
 	
-	private KmerCollection insertKmer(TranslationTable trTable,FastaReader faReader,VCFReader vcfReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException  {
+	private KmerCollection insertKmer(TranslationTable trTable,FastaReader faReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException  {
 		final int k=this.k;
 		final int jump=this.jump;
 		final int geneCodeLen=this.geneCodeLen;
@@ -314,6 +354,7 @@ public class DatabaseBuilder {
 	private void addSNPs(TranslationTable trTable,KmerCollection kc,FastaReader faReader,VCFReader vcfReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException  {
 		final int k=this.k;
 		final int jump=this.jump;
+		final int threads=this.threads;
 		
 		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threads);
 		for(int i=0;i<threads;++i) {
@@ -365,6 +406,7 @@ public class DatabaseBuilder {
 			    long[] kmerList=new long[200];
 			    RefSequence ref=null;
 			    SNP[] snpArray=null;
+			    Segment lastSeg=null;
 			    while((snpArray=vcfReader.readVCF())!=null) {
 			    	for(SNP snp:snpArray) {
 			    		if(snp==null) {
@@ -375,7 +417,9 @@ public class DatabaseBuilder {
 			    			continue;
 			    		}
 			    		
-			    		ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
+			    		if(seg!=lastSeg) {
+			    	    	ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
+			    		}
 			    		int pos=snp.pos-seg.start-1;
 			    		
 			    		int refLen=snp.ref.length;
@@ -410,6 +454,7 @@ public class DatabaseBuilder {
 			    			kc.insert(kmerList[kmerListLen-1],recentCode,-1);
 			    		}
 			    		
+			    		lastSeg=seg;
 			    	}
 			    }
 			}catch(Exception e) {
@@ -601,6 +646,120 @@ public class DatabaseBuilder {
 		}
 	}
 	
+	private void updateSNPsPos(TranslationTable trTable,KmerCollection kc,FastaReader faReader,VCFReader vcfReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException  {
+		final int k=this.k;
+		final int jump=this.jump;
+		final int threads=this.threads;
+		
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threads);
+		for(int i=0;i<threads;++i) {
+			fixedThreadPool.execute(new UpdateSNPsHelper(k,jump,faReader,vcfReader,trTable,kc));
+		}
+		
+		fixedThreadPool.shutdown();
+		while (!fixedThreadPool.awaitTermination(1, TimeUnit.SECONDS)) { }
+
+	}
+	
+	private class UpdateSNPsHelper implements Runnable{
+		private int k,jump;
+		private DNASeqWindow refWindow;
+		private FastaReader faReader;
+		private VCFReader vcfReader;
+		private TranslationTable trTable;
+		private KmerCollection kc;
+		
+		public UpdateSNPsHelper(int k,int jump,FastaReader faReader,VCFReader vcfReader,TranslationTable trTable,KmerCollection kc) throws IllegalPositionException, IllegalBioFileException, IOException{
+			this.k=k;
+			this.jump=jump;
+			this.faReader=faReader;
+			this.vcfReader=vcfReader;
+			this.trTable=trTable;
+			this.refWindow=new DNASeqWindow(k);
+			this.kc=kc;
+		}
+		
+		@Override
+		public void run() {
+			try {
+	     		final TranslationTable trTable=this.trTable;
+	     		final KmerCollection kc=this.kc;
+	    		final DNASeqWindow refWindow=this.refWindow;
+	    		final FastaReader faReader=this.faReader;
+	    		final VCFReader vcfReader=this.vcfReader;
+	    		final int k=this.k,jump=this.jump;
+	    		
+			    byte[] seq=new byte[220];
+			    long[] kmerList=new long[200];
+			    long[] revKmerList=new long[200];
+			    RefSequence ref=null;
+			    SNP[] snpArray=null;
+			    Segment lastSeg=null;
+			    while((snpArray=vcfReader.readVCF())!=null) {
+			    	for(SNP snp:snpArray) {
+			    		if(snp==null) {
+			    			break;
+			    		}
+			    		Segment seg=trTable.findSegment(snp.chrom, snp.pos);
+			    		if(seg==null) {
+			    			continue;
+			    		}
+			    		
+			    		if(seg!=lastSeg) {
+			    	    	ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
+			    		}
+			    		int pos=snp.pos-seg.start-1;
+			    		
+			    		int refLen=snp.ref.length;
+			    		int altLen=snp.alt.length;
+			    		if(pos<k-1 || snp.pos+refLen+k-1>seg.end || refLen>150 || altLen>150) {
+			    			continue;
+			    		}
+			    			
+			    		ref.copyBases(seq, 0, pos-k+1, k-1);
+			    		System.arraycopy(snp.alt, 0, seq, k-1, altLen);
+			    		ref.copyBases(seq, altLen+k-1, pos+refLen, k-1);
+			    		
+			    		refWindow.set(seq,0,1,altLen+2*k-2);
+			    		for(int i=0;refWindow.hasNextKmer();++i) {
+			    			kmerList[i]=refWindow.nextKmer();
+			    			revKmerList[i]=refWindow.showThisAsRevComp();
+			    		}
+			    		
+			    		int recentCode=seg.code;
+			    		int kmerListLen=altLen+k-1;
+			    		int leftStartPos=pos-k+1;
+			    		int leftStartRemain=leftStartPos%jump;
+			    		int leftStart=leftStartRemain!=0?jump-leftStartRemain:0;
+			    		
+
+				    	for(int i=0;i+leftStart<kmerListLen;++i) {
+				    		if(i%3==0) {
+				    			/*if(snp.chrom.equals("chr2") && snp.pos==42526854) {
+				    				System.out.println("CXXXXXX");
+				    				System.out.println(DNASequence.decompressKmer(revKmerList[i+leftStart],23));
+				    				System.out.println("AAA"+"    "+Long.toHexString(kc.find(revKmerList[i+leftStart])));
+				    			}*/
+					    		kc.update(revKmerList[i+leftStart],recentCode);
+					    		/*if(snp.chrom.equals("chr2") && snp.pos==42526854) {
+				    				System.out.println(DNASequence.decompressKmer(revKmerList[i+leftStart],23));
+				    				System.out.println("BBB"+"    "+Long.toHexString(kc.find(revKmerList[i+leftStart])));
+				    			}*/
+				    		}else {
+				    			kc.update(kmerList[i+leftStart],recentCode);
+				    			kc.update(revKmerList[i+leftStart],recentCode);
+				    		}
+				    	}
+			    		
+			    		lastSeg=seg;
+			    	}
+			    }
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	private void setKmerScore(KmerCollection kc,TranslationTable trTable,FastaReader faReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException {
 		final int k=this.k;
 		final int threads=this.threads;
@@ -778,6 +937,137 @@ public class DatabaseBuilder {
 		    			}
 	    			}
 	    		}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	private void updateLongKmerSNPsPos(LongKmerCollection longkc,TranslationTable trTable,FastaReader faReader,VCFReader vcfReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException {
+		final int k=this.k,longk=this.longk,threads=this.threads,jump=this.jump;
+		
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threads);
+		for(int i=0;i<threads;++i) {
+			fixedThreadPool.execute(new UpdateSNPsLongHelper(k,longk,jump,faReader,vcfReader,trTable,longkc));
+		}
+		
+		fixedThreadPool.shutdown();
+		while (!fixedThreadPool.awaitTermination(1, TimeUnit.SECONDS)) { }
+	}
+	
+	private void updateSpacedSeedSNPsPos(LongKmerCollection spacedkc,TranslationTable trTable,FastaReader faReader,VCFReader vcfReader) throws IllegalPositionException, IllegalBioFileException, IOException, InterruptedException {
+		final int k=this.k,spacedk=this.spacedk,threads=this.threads,jump=this.jump;
+		
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threads);
+		for(int i=0;i<threads;++i) {
+			fixedThreadPool.execute(new UpdateSNPsLongHelper(k,spacedk,jump,faReader,vcfReader,trTable,spacedkc));
+		}
+		
+		fixedThreadPool.shutdown();
+		while (!fixedThreadPool.awaitTermination(1, TimeUnit.SECONDS)) { }
+		
+	}
+	
+	private class UpdateSNPsLongHelper implements Runnable{
+		private int k,longk,jump,kmerLMove1,kmerLMove2;;
+		private DNASeqWindow refWindowL,refWindowR;
+		private FastaReader faReader;
+		private VCFReader vcfReader;
+		private TranslationTable trTable;
+		private LongKmerCollection longkc;
+		
+		public UpdateSNPsLongHelper(int k,int longk,int jump,FastaReader faReader,VCFReader vcfReader,TranslationTable trTable,LongKmerCollection longkc) throws IllegalPositionException, IllegalBioFileException, IOException{
+			this.k=k;
+			this.longk=longk;
+			this.jump=jump;
+			this.faReader=faReader;
+			this.vcfReader=vcfReader;
+			this.trTable=trTable;
+			this.refWindowL=new DNASeqWindow(k);
+			this.refWindowR=new DNASeqWindow(k);
+			this.longkc=longkc;
+			if(longk<k*2) {
+				this.kmerLMove1=(k-(longk-32))*2;
+	    		this.kmerLMove2=(longk-k)*2;
+			}else {
+				this.kmerLMove1=(32-k)*2;
+	    		this.kmerLMove2=k*2;
+			}
+		}
+		
+		@Override
+		public void run() {
+			try {
+	     		final TranslationTable trTable=this.trTable;
+	     		final LongKmerCollection longkc=this.longkc;
+	    		final DNASeqWindow refWindowL=this.refWindowL;
+	    		final DNASeqWindow refWindowR=this.refWindowR;
+	    		final FastaReader faReader=this.faReader;
+	    		final VCFReader vcfReader=this.vcfReader;
+	    		final int k=this.k,longk=this.longk,jump=this.jump,kmerLMove1=this.kmerLMove1,kmerLMove2=this.kmerLMove2;
+	    		
+			    byte[] seq=new byte[350];
+			    long[] kmerListL=new long[330];
+			    long[] revKmerListL=new long[330];
+			    long[] kmerListR=new long[330];
+			    long[] revKmerListR=new long[330];
+			    RefSequence ref=null;
+			    SNP[] snpArray=null;
+			    Segment lastSeg=null;
+			    while((snpArray=vcfReader.readVCF())!=null) {
+			    	for(SNP snp:snpArray) {
+			    		if(snp==null) {
+			    			break;
+			    		}
+			    		Segment seg=trTable.findSegment(snp.chrom, snp.pos);
+			    		if(seg==null) {
+			    			continue;
+			    		}
+			    		
+			    		if(seg!=lastSeg) {
+			    	    	ref=faReader.getSequence(seg.chrom,seg.start+1,seg.end);
+			    		}
+			    		int pos=snp.pos-seg.start-1;
+			    		
+			    		int refLen=snp.ref.length;
+			    		int altLen=snp.alt.length;
+			    		if(pos<longk-1 || snp.pos+refLen+longk-1>seg.end || refLen>150 || altLen>150) {
+			    			continue;
+			    		}
+			    			
+			    		ref.copyBases(seq, 0, pos-longk+1, longk-1);
+			    		System.arraycopy(snp.alt, 0, seq, longk-1, altLen);
+			    		ref.copyBases(seq, altLen+longk-1, pos+refLen, longk-1);
+			    		
+			    		refWindowL.set(seq,0,1,altLen+2*longk-2);
+			    		refWindowR.set(seq,longk-k,1,altLen+2*longk-2);
+			    		for(int i=0;refWindowR.hasNextKmer();++i) {
+			    			kmerListL[i]=refWindowL.nextKmer();
+			    			revKmerListL[i]=refWindowL.showThisAsRevComp();
+			    			kmerListR[i]=refWindowR.nextKmer();
+			    			revKmerListR[i]=refWindowR.showThisAsRevComp();
+			    		}
+			    		
+			    		int recentCode=seg.code;
+			    		int kmerListLen=altLen+longk-1;
+			    		int leftStartPos=pos-longk+1;
+			    		int leftStartRemain=leftStartPos%jump;
+			    		int leftStart=leftStartRemain!=0?jump-leftStartRemain:0;
+			    		
+
+				    	for(int i=0;i+leftStart<kmerListLen;++i) {
+				    		if(i%3==0) {
+					    		longkc.update((int)(revKmerListR[i+leftStart]>>>kmerLMove1), (revKmerListR[i+leftStart]<<kmerLMove2)|revKmerListL[i+leftStart], recentCode);
+				    		}else {
+				    			longkc.update((int)(kmerListL[i+leftStart]>>>kmerLMove1), (kmerListL[i+leftStart]<<kmerLMove2)|kmerListR[i+leftStart], recentCode);
+				    			longkc.update((int)(revKmerListR[i+leftStart]>>>kmerLMove1), (revKmerListR[i+leftStart]<<kmerLMove2)|revKmerListL[i+leftStart], recentCode);
+				    		}
+				    	}
+			    		
+				    	lastSeg=seg;
+			    	}
+			    }
 			}catch(Exception e) {
 				e.printStackTrace();
 			}

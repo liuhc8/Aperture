@@ -179,14 +179,15 @@ public class ResultsSorter {
 					//	System.out.println("+++ "+no+" from "+initStart+"  "+len+"  to "+mergedStart);
 					//}
 					
-					FileLock lock = outFc.lock(mergedStart,len, false);
-					out.seek(mergedStart);
+					//FileLock lock = outFc.lock(mergedStart,len, false);
+					//out.seek(mergedStart);
+					outFc.position(mergedStart);
 					for(int remainBytes=len;remainBytes>0;) {
 						long transfered=inFc.transferTo(initStart, remainBytes, outFc);
 						initStart+=transfered;
 						remainBytes-=transfered;
 					}
-					lock.release();
+					//lock.release();
 				}				
 				outFc.force(true);
 				

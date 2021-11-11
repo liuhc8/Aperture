@@ -480,6 +480,7 @@ public final class ClassifyWorker implements Runnable{
 	private void searchKmers0(KmerCollection kc,int kmersLen,long[] kmerList,int[] codeList,int[] posList,int[] scoreList) {
 		
 	//	System.out.println("kmerlen::"+kmersLen);
+		
 		for(int i=0;i<kmersLen;i+=2) {	
 			long findres=kc.find(kmerList[i]);
 			decodeFindRes(i,findres,codeList,posList,scoreList);
@@ -1086,13 +1087,13 @@ public final class ClassifyWorker implements Runnable{
 		
 		if(ApertureMain.debug) {
 		synchronized(kc) {
-			if((leftCode==ApertureMain.lCode && rightCode==ApertureMain.rCode)||(leftCode==ApertureMain.rCode && rightCode==ApertureMain.lCode)) {
+			//if((leftCode==ApertureMain.lCode && rightCode==ApertureMain.rCode)||(leftCode==ApertureMain.rCode && rightCode==ApertureMain.lCode)) {
 		
 		    //if((leftCode==ApertureMain.lCode && rightCode==ApertureMain.rCode && leftPos<ApertureMain.lPos+200 && leftPos>ApertureMain.lPos-200 && rightPos<ApertureMain.rPos+200 && rightPos>ApertureMain.rPos-200)
     		//		||(leftCode==ApertureMain.rCode && rightCode==ApertureMain.lCode && rightPos<ApertureMain.lPos+200 && rightPos>ApertureMain.lPos-200 && leftPos<ApertureMain.rPos+200 && leftPos>ApertureMain.rPos-200)) {
 			//  if((leftCode==ApertureMain.lCode && rightCode==ApertureMain.rCode && leftPos==ApertureMain.lPos && rightPos==ApertureMain.rPos)
 			//		||(leftCode==ApertureMain.rCode && rightCode==ApertureMain.lCode && rightPos==ApertureMain.lPos && leftPos==ApertureMain.rPos)) {
-			//if(true) {
+			if(true) {
 	       		System.out.println(r1.toString());
 	     	    System.out.println(r2.toString());
 

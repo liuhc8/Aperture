@@ -400,21 +400,25 @@ class SplitSupport extends SVSupport{
 		svc.setRight(rightSeg,this.rightPos,this.rightKmers, getRightScoreAvg(),this.rightForward,k);
 
 		/*int leftIdentical,rightIdentical;
-		synchronized(ApertureMain.sync) {
-		System.out.println("AAAAAAA");
-		leftIdentical=seqAlignmentLeft(leftSeg,k);
-		System.out.println();
-		System.out.println(seq.toStringBp());
-		System.out.println(leftIdentical);
-		System.out.println("BBBBBB");
-		rightIdentical=seqAlignmentRight(rightSeg,k);
-		System.out.println();
-		System.out.println(seq.toStringRevBp());
-		System.out.println(rightIdentical);
+		if(ApertureMain.debug) {
+			synchronized(ApertureMain.sync) {
+				System.out.println(leftSeg.chrom+":"+leftSeg.code+":"+leftSeg.start+":"+leftSeg.end);
+				System.out.println(rightSeg.chrom+":"+rightSeg.code+":"+rightSeg.start+":"+rightSeg.end);
+				System.out.println("AAAAAAA");
+				leftIdentical=seqAlignmentLeft(leftSeg,k);
+				System.out.println();
+				System.out.println(seq.toStringBp());
+				System.out.println(leftIdentical);
+				System.out.println("BBBBBB");
+				rightIdentical=seqAlignmentRight(rightSeg,k);
+				System.out.println();
+				System.out.println(seq.toStringRevBp());
+				System.out.println(rightIdentical);
+			}
 		}*/
 		
 		int leftIdentical=seqAlignmentLeft(leftSeg,k);
-		int rightIdentical=seqAlignmentRight(rightSeg,k);
+	    int rightIdentical=seqAlignmentRight(rightSeg,k);
 		
 		int bpLen=this.seq.getBpLen();
 		if(leftIdentical>=bpLen || leftIdentical<=0 || rightIdentical>=bpLen || rightIdentical<=0) {
@@ -436,10 +440,10 @@ class SplitSupport extends SVSupport{
 		//int maxLen=leftBpLen>=3?leftBpLen+k:3+k;
 		//maxLen=maxLen>bpLen?bpLen:maxLen;
 		if(leftForward) {
-			//System.out.println("leftForward "+leftBpLen);
+			//System.out.println("leftForward "+bpLen);
 			return countIdenticalFor(leftSeg.ref,this.leftPos+1,bpLen,this.seq.getBpSeq());
 		}else {
-			//System.out.println("leftRev "+leftBpLen);
+			//System.out.println("leftRev "+bpLen);
 			return countIdenticalRev(leftSeg.ref,this.leftPos+k-1,bpLen,this.seq.getBpSeq());
 		}
 	}
@@ -450,10 +454,10 @@ class SplitSupport extends SVSupport{
 		//int maxLen=rightBpLen>=3?rightBpLen+k:3+k;
 		//maxLen=maxLen>bpLen?bpLen:maxLen;
 		if(rightForward) {
-			//System.out.println("rightForward "+rightBpLen);
+			//System.out.println("rightForward "+bpLen);
 			return countIdenticalRev(rightSeg.ref,this.rightPos+k-1,bpLen,this.seq.getRevBpSeq());
 		}else {
-			//System.out.println("rightRev "+rightBpLen);
+			//System.out.println("rightRev "+bpLen);
 			return countIdenticalFor(rightSeg.ref,this.rightPos+1,bpLen,this.seq.getRevBpSeq());
 		}
 	}
@@ -464,16 +468,27 @@ class SplitSupport extends SVSupport{
         int offset=start&0x1F;
         long sub;
         boolean end=false;
+        
+        if(ApertureMain.debug) {
+        	System.out.println("block:"+blockPos+":"+offset+":"+ref.length);
+        	System.out.println("1: "+DNASequence.decompressKmer(ref[blockPos],32).toString());
+        	System.out.println("2: "+DNASequence.decompressKmer(ref[blockPos+1],32).toString());
+        }
+        
         for(int i=0;len>0;++i) {
         	if(blockPos+1==ref.length) {
         		sub=(ref[blockPos]<<(offset<<1))|(((1<<(offset<<1))-1)&(~bpSeq[i]));
         		end=true;
         	}else if(blockPos+1<ref.length){
-        		sub=(ref[blockPos]<<(offset<<1))|(ref[blockPos+1]>>>((32-offset)<<1));
+        		sub=offset==0?ref[blockPos]:(ref[blockPos]<<(offset<<1))|(ref[blockPos+1]>>>((32-offset)<<1));
         	}else {
         		return sameBaseCnt;
         	}
-	    	//System.out.print(DNASequence.decompressKmer(sub,32).toString());
+        	
+        	if(ApertureMain.debug) {
+        		System.out.print(DNASequence.decompressKmer(sub,32).toString());
+        	}
+        	
         	long xor=sub^bpSeq[i];
 	        int cnt=Long.numberOfLeadingZeros(xor)>>>1;
         	//if(cnt<=10 && sameBaseCnt==0) {
@@ -509,6 +524,13 @@ class SplitSupport extends SVSupport{
         int offset=start&0x1F;
         long sub;
         boolean end=false;
+        
+        if(ApertureMain.debug) {
+        	System.out.println("block:"+blockPos+":"+offset+":"+ref.length);
+        	System.out.println("1: "+DNASequence.decompressKmer(ref[blockPos],32).toString());
+        	System.out.println("2: "+DNASequence.decompressKmer(ref[blockPos+1],32).toString());
+        }
+        
         for(int i=0;len>0;++i) {
         	if(blockPos==0) {
         		sub=ref[blockPos]>>>((32-offset)<<1);
@@ -516,12 +538,16 @@ class SplitSupport extends SVSupport{
         		sub|=(((1<<((32-offset)<<1))-1)&(~bpSeq[i]));
         		end=true;
         	}else if(blockPos>0){
-        		sub=(ref[blockPos-1]<<(offset<<1))|(ref[blockPos]>>>((32-offset)<<1));
+        		sub=offset==0?ref[blockPos-1]:(ref[blockPos-1]<<(offset<<1))|(ref[blockPos]>>>((32-offset)<<1));
         		sub=DNASequence.getRevComp(sub, 32);
         	}else {
         		return sameBaseCnt;
         	}
-	       // System.out.print(DNASequence.decompressKmer(sub,32).toString());
+        	
+        	if(ApertureMain.debug) {
+        		System.out.print(DNASequence.decompressKmer(sub,32).toString());
+        	}
+        	
         	long xor=sub^bpSeq[i];
 	        int cnt=Long.numberOfLeadingZeros(xor)>>>1;
         	//if(cnt<=10 && sameBaseCnt==0) {

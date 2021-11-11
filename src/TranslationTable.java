@@ -178,6 +178,15 @@ public class TranslationTable implements Serializable{
 		}
 	}
 	
+	public String toString() {
+		StringBuilder strb=new StringBuilder(100);
+		String tab="\t";
+		for(int i=0;i<chrom.length;++i) {
+			strb.append(chrom[i]).append(tab).append(start[i]).append(tab).append(end[i]).append(tab).append(geneCode[i]).append("\n");
+		}
+		return strb.toString();
+	}
+	
 	private class Scope{
 		int start,end;
 		

@@ -1,15 +1,19 @@
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.cli.*;
 
 public class ApertureMain {
-	public final static String APERTURE_VERSION="1.2";
+	public final static String APERTURE_VERSION="1.3";
 	public static int lCode,lPos,rCode,rPos;
 	public static boolean debug=false;
 	//public static Integer sync=new Integer(0);
@@ -20,6 +24,10 @@ public class ApertureMain {
 			                throws FileNotFoundException, IllegalBioFileException, IllegalThreadNumberException, 
 			                IOException, InterruptedException, ExecutionException, ClassNotFoundException, IllegalPositionException 
 	{
+		
+		//TranslationTable table=readTranslationTable(Paths.get(index+".tt"));
+		//System.out.print(table);
+		
 		Path r1Path=Paths.get(r1);
 		ensureFastqFileExist(r1Path);
 		Path r2Path=Paths.get(r2);
@@ -55,6 +63,7 @@ public class ApertureMain {
 		
 		long time1=System.currentTimeMillis();  
 		long interval1=(time1-time0)/1000;  
+		System.out.println("Elapsed time: "+interval1+"s");
     	
 		System.out.print("K-mer Based Searching...");
     	int[] blockCntList=classifier.classify();
@@ -64,12 +73,17 @@ public class ApertureMain {
     	
     	long time2=System.currentTimeMillis();  
 		long interval2=(time2-time1)/1000;  
+		System.out.println("Elapsed time: "+interval2+"s");
  
     	System.out.print("Sorting Candidates...");
     	ResultsSorter sorter=new ResultsSorter(tempDataList,tempIndexList,nthreads,mergedDataPath,blockCntList);
-    	BpIndexList finalIndexlist=sorter.sortResults();
-    	tryDeleteFiles(tempDataList);
-    	tryDeleteFiles(tempIndexList);
+    	BpIndexList finalIndexlist=null;
+    	try {
+        	finalIndexlist=sorter.sortResults();
+    	}finally {
+    		tryDeleteFiles(tempDataList);
+        	tryDeleteFiles(tempIndexList);
+    	}
     	
     	tempDataList=null;
     	tempIndexList=null;
@@ -78,12 +92,18 @@ public class ApertureMain {
     	
     	long time3=System.currentTimeMillis();  
 		long interval3=(time3-time2)/1000;  
+		System.out.println("Elapsed time: "+interval3+"s");
     	
     	System.out.print("Clustering Breakpoint Candidates...");
     	BpClusterManager mergeManager=new BpClusterManager(ttPath,workDir,projectName,nthreads,mergeK,similarity,mergedDataPath);
-    	SVCollection svCollection=mergeManager.mergeBreakpoints(finalIndexlist);
+    	SVCollection svCollection=null;
     	
-    	tryDeleteAFile(mergedDataPath);
+    	try {
+        	svCollection=mergeManager.mergeBreakpoints(finalIndexlist);
+    	}finally {
+    		tryDeleteAFile(mergedDataPath);
+    	}
+    	
     	mergedDataPath=null;
     	mergeManager=null;
     	
@@ -96,6 +116,7 @@ public class ApertureMain {
     	
     	long time4=System.currentTimeMillis();  
 		long interval4=(time4-time3)/1000;  
+		System.out.println("Elapsed time: "+interval4+"s");
     	
     	System.out.print("Filtering And Saving...");
     	
@@ -164,7 +185,8 @@ public class ApertureMain {
 		}else {
 			System.out.println("Invalid command: " + args[0]+" !");
 			aperture.showApertureHelp();
-		}		
+		}
+		
 	}
 	
 	private void showApertureHelp() {
@@ -421,6 +443,22 @@ public class ApertureMain {
 			Files.delete(path);
 		}catch(IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private TranslationTable readTranslationTable(Path ttPath) throws IOException, ClassNotFoundException {
+		ObjectInputStream objIn=null;
+		try {
+			objIn=new ObjectInputStream(new GZIPInputStream(new FileInputStream(ttPath.toFile())));
+			return (TranslationTable)objIn.readObject();
+		}finally {
+			if(objIn!=null) {
+				try{
+					objIn.close();
+				}catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

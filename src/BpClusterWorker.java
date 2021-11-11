@@ -855,6 +855,7 @@ public class BpClusterWorker implements Runnable{
 			/*if((bp.getLeftCode()==809501704 && bp.getRightCode()==270549520)||(bp.getLeftCode()==270549520 && bp.getRightCode()==809501704)){
 				System.out.print("FFFF "+bp.getLeftCode()+" + "+bp.getRightCode());
 			}*/
+			bp.getBpSeq().clearKmerListAndSet();
 			svCollection.adjustAndAdd(bp);
 		}
 		

@@ -319,7 +319,9 @@ public class BpSeq implements Comparable<BpSeq>{
 	
 	public void clean() {
 		this.seq=null;
-		this.kmerSet.clear();
+		if(this.kmerSet!=null) {
+	    	this.kmerSet.clear();
+		}
 		this.kmerSet=null;
 		this.kmerList=null;
 		this.bp=null;
@@ -328,6 +330,13 @@ public class BpSeq implements Comparable<BpSeq>{
 		this.bpSeqRev=null;
 	}
 	
+	public void clearKmerListAndSet() {
+		if(this.kmerSet!=null) {
+	    	this.kmerSet.clear();
+		}
+		this.kmerSet=null;
+		this.kmerList=null;
+	}
 
 	@Override
 	public int compareTo(BpSeq o) {    //descending order
